@@ -1,7 +1,11 @@
 package it.unibo.jurassiko.model.player.api;
 
+import java.util.Map;
 import java.util.Set;
 
+import it.unibo.jurassiko.controller.api.MainController;
+import it.unibo.jurassiko.model.card.api.Card;
+import it.unibo.jurassiko.model.card.api.Card.CardType;
 import it.unibo.jurassiko.model.objective.api.Objective;
 import it.unibo.jurassiko.model.territory.api.Territory;
 
@@ -108,5 +112,51 @@ public interface Player {
      * @throws CloneNotSupportedException
      */
     Player getPlayer() throws CloneNotSupportedException;
+
+    /**
+     * Calculates the combination score with a destination deck based on a set of
+     * territories.
+     * 
+     * @param destinationDeck the destination deck where to move the cards of the
+     *                        combination
+     * @param territories     the set of territories to consider for the bonus
+     * @return the combination score
+     */
+    int combination(MainController destinationDeck, Set<Territory> territories);
+
+        /**
+     * @return a map containing the count of each card type in the deck
+     */
+    Map<CardType, Integer> getTypeMap();
+
+    /**
+     * @return true if a card has been assigned to the player during their turn,
+     *         false otherwise.
+     */
+    boolean isAssigned();
+
+    /**
+     * Sets whether a card has been assigned to the player during their turn.
+     *
+     * @param b true to indicate that a card has been assigned to the player during
+     *          their turn, false otherwise.
+     */
+    void setAssigned(boolean b);
+
+       /**
+     * Retrieves the card at the specified index in the deck, if present.
+     * 
+     * @param index the index of the card to retrieve
+     * @return an Optional containing the card at the specified index, or an empty
+     *         Optional if the index is out of range
+     */
+    //Optional<Card> getCard(int index);
+
+    /**
+     * Adds a card to the deck.
+     * 
+     * @param card the card to add
+     */
+    void addCard(Card card);
 
 }

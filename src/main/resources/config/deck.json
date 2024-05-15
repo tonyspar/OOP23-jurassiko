@@ -1,0 +1,94 @@
+[
+    {
+        "type": "JOLLY",
+        "territory": null
+    },
+    {
+        "type": "JOLLY",
+        "territory": null
+    },
+    {
+        "type": "JACK",
+        "territory": "Appalachia"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Messico"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Canada"
+    },
+    {
+        "type": "JACK",
+        "territory": "Groelandia"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Baltica"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Europa"
+    },
+    {
+        "type": "JACK",
+        "territory": "Asia Centrale"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Cina"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Tibet"
+    },
+    {
+        "type": "JACK",
+        "territory": "Indonesia"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Australia"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Antartica"
+    },
+    {
+        "type": "JACK",
+        "territory": "India"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Madagasgar"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Arabia"
+    },
+    {
+        "type": "JACK",
+        "territory": "Nord Africa"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Congo"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Sud Africa"
+    },
+    {
+        "type": "JACK",
+        "territory": "Amazzonia"
+    },
+    {
+        "type": "HORSE",
+        "territory": "Sud America"
+    },
+    {
+        "type": "CANNON",
+        "territory": "Siberia"
+    }
+]

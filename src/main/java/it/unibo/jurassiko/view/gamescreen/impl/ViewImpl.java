@@ -13,6 +13,7 @@ import it.unibo.jurassiko.controller.api.MainController;
 import it.unibo.jurassiko.view.gamescreen.api.View;
 import it.unibo.jurassiko.view.panels.MapPanel;
 import it.unibo.jurassiko.view.panels.TopBarPanel;
+import it.unibo.jurassiko.view.windows.CardWindow;
 import it.unibo.jurassiko.view.windows.ObjectiveWindow;
 
 /**
@@ -25,6 +26,7 @@ public class ViewImpl extends JFrame implements View {
     private final MapPanel panel;
     private final TopBarPanel buttons;
     private final ObjectiveWindow objectiveCard;
+    private final CardWindow cardWindow;
     private static final String TITLE = "Jurassiko";
 
     /**
@@ -35,7 +37,8 @@ public class ViewImpl extends JFrame implements View {
     public ViewImpl(final MainController mainContr) {
         this.panel = new MapPanel(mainContr);
         this.objectiveCard = new ObjectiveWindow(mainContr);
-        this.buttons = new TopBarPanel(mainContr, this.objectiveCard);
+        this.cardWindow = new CardWindow(mainContr);
+        this.buttons = new TopBarPanel(mainContr, this.objectiveCard, this.cardWindow);
         this.setTitle(TITLE);
         this.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         this.setResizable(false);
@@ -84,6 +87,7 @@ public class ViewImpl extends JFrame implements View {
         this.panel.updateBoard();
         this.buttons.updateTopBar();
         this.objectiveCard.updateObjective();
+        this.cardWindow.updateCard();
     }
 
     /**

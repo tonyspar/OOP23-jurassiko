@@ -20,10 +20,10 @@ import it.unibo.jurassiko.model.player.api.Player.GameColor;
  */
 public class GameEngineImpl implements GameEngine {
 
-    private final Logger logger = LoggerFactory.getLogger(GameEngineImpl.class);
-
     private static final int MAX_PLAYERS = 3;
+
     private static final int FIRST_TURN_BONUS = 13;
+    private final Logger logger = LoggerFactory.getLogger(GameEngineImpl.class);
 
     private final GamePhase gamePhase;
     private final PlayerTurn playerTurn;
@@ -39,7 +39,8 @@ public class GameEngineImpl implements GameEngine {
      * 
      * @param controller the MainController used to interact with the view
      */
-    @SuppressFBWarnings(value = "EI_EXPOSE_REP2", justification = "MainController instance is needed on this class by design")
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+    justification = "MainController instance is needed on this class by design")
     public GameEngineImpl(final MainController controller) {
         this.gamePhase = new GamePhaseImpl();
         this.controller = controller;
@@ -136,7 +137,8 @@ public class GameEngineImpl implements GameEngine {
         if (gamePhase.getPhase().equals(GamePhase.Phase.PLACEMENT)) {
             controller.updateBoard();
             controller.openTerritorySelector();
-            final var bonusGroundDino = playerTurn.getCurrentPlayerTurn().getBonusGroundDino();
+            final var bonusGroundDino = playerTurn.getCurrentPlayerTurn().getBonusGroundDino() + playerTurn
+                    .getCurrentPlayerTurn().combination(controller, playerTurn.getCurrentPlayerTurn().getOwnedTerritories());
             final var bonusWaterDino = playerTurn.getCurrentPlayerTurn().getBonusWaterDino();
             if (controller.getTotalClicks() == bonusGroundDino + bonusWaterDino) {
                 gamePhase.goNext();

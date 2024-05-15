@@ -1,16 +1,17 @@
 package it.unibo.jurassiko.controller.api;
 
-import it.unibo.jurassiko.common.Pair;
-import it.unibo.jurassiko.core.api.GamePhase;
-import it.unibo.jurassiko.model.player.api.Player;
-import it.unibo.jurassiko.model.player.api.Player.GameColor;
-import it.unibo.jurassiko.model.territory.api.Ocean;
-import it.unibo.jurassiko.model.territory.api.Territory;
-
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Set;
+
+import it.unibo.jurassiko.common.Pair;
+import it.unibo.jurassiko.core.api.GamePhase;
+import it.unibo.jurassiko.model.card.api.Card;
+import it.unibo.jurassiko.model.player.api.Player;
+import it.unibo.jurassiko.model.player.api.Player.GameColor;
+import it.unibo.jurassiko.model.territory.api.Ocean;
+import it.unibo.jurassiko.model.territory.api.Territory;
 
 /**
  * Interface for the MainController, the core controller.
@@ -45,6 +46,22 @@ public interface MainController {
      * @return current player
      */
     Player getCurrentPlayer();
+
+    /**
+     * Retrieves the card at the specified index in the deck, if present.
+     * 
+     * @param index the index of the card to retrieve
+     * @return an Optional containing the card at the specified index, or an empty
+     *         Optional if the index is out of range
+     */
+    Optional<Card> getCard(int index);
+
+    /**
+     * Adds a card to the deck.
+     * 
+     * @param card the card to add
+     */
+    void addCard(Card card);
 
     /**
      * Updates and shows the buttons in the frame.
@@ -179,5 +196,13 @@ public interface MainController {
      * @return the amount of dino to place
      */
     int getRemainingDinoToPlace();
+
+    /**
+     * Assigns the cards from this deck to a destination deck.
+     *
+     * @return an Optional containing a card from this deck if available, or an
+     *         empty Optional if the deck is empty
+     */
+    Optional<Card> assignment();
 
 }

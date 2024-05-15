@@ -10,6 +10,10 @@ import java.util.Set;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 
+import it.unibo.jurassiko.controller.api.MainController;
+import it.unibo.jurassiko.controller.impl.MainControllerImpl;
+import it.unibo.jurassiko.model.card.api.Card.CardType;
+import it.unibo.jurassiko.model.card.impl.CardImpl;
 import it.unibo.jurassiko.model.objective.api.Objective;
 import it.unibo.jurassiko.model.objective.impl.ObjectiveFactoryImpl;
 import it.unibo.jurassiko.model.player.api.Player;
@@ -23,8 +27,16 @@ import it.unibo.jurassiko.model.territory.impl.TerritoryFactoryImpl;
 class TestPlayer {
 
     private Player player;
+    private final MainController controller = new MainControllerImpl();
     private final Set<Territory> territory = new TerritoryFactoryImpl().createTerritories();
     private final Set<Objective> objective = new ObjectiveFactoryImpl().createObjectives();
+    private final Set<Territory> territoryforcombination = new HashSet<>();
+    private static final String MESSICO = "messico";
+    private static final int COMBINATION_WITH_TREE_DIFFERENT = 5;
+    private static final int COMBINATION_WITH_TREE_HORSE = 4;
+    private static final int COMBINATION_WITH_TREE_CANNON = 2;
+    private static final int COMBINATION_WITH_TREE_JACK = 3;
+    private static final int RESULT_OF_COMBINATION_WITH_JOLLY = 6;
 
     @BeforeEach
     void initPlayer() {
@@ -84,5 +96,31 @@ class TestPlayer {
                 .filter(e -> e.getName().toLowerCase(Locale.ROOT).equals(name.toLowerCase(Locale.ROOT)))
                 .findFirst();
         return result.get();
+    }
+
+    @Test
+    void testCombination() {
+        player.addCard(CardImpl.createCard(CardType.JOLLY, MESSICO));
+        player.addCard(CardImpl.createCard(CardType.JACK, MESSICO));
+        player.addCard(CardImpl.createCard(CardType.JACK, MESSICO));
+        assertEquals(RESULT_OF_COMBINATION_WITH_JOLLY, player.combination(controller, territoryforcombination));
+        assertEquals(0, player.getTypeMap().get(CardType.JOLLY));
+        assertEquals(0, player.getTypeMap().get(CardType.JACK));
+        for (int i = 0; i < 3; i++) {
+            player.addCard(CardImpl.createCard(CardType.JACK, MESSICO));
+        }
+        assertEquals(COMBINATION_WITH_TREE_JACK, player.combination(controller, territoryforcombination));
+        for (int i = 0; i < 3; i++) {
+            player.addCard(CardImpl.createCard(CardType.CANNON, MESSICO));
+        }
+        assertEquals(COMBINATION_WITH_TREE_CANNON, player.combination(controller, territoryforcombination));
+        for (int i = 0; i < 3; i++) {
+            player.addCard(CardImpl.createCard(CardType.HORSE, MESSICO));
+        }
+        assertEquals(COMBINATION_WITH_TREE_HORSE, player.combination(controller, territoryforcombination));
+        player.addCard(CardImpl.createCard(CardType.HORSE, MESSICO));
+        player.addCard(CardImpl.createCard(CardType.CANNON, MESSICO));
+        player.addCard(CardImpl.createCard(CardType.JACK, MESSICO));
+        assertEquals(COMBINATION_WITH_TREE_DIFFERENT, player.combination(controller, territoryforcombination));
     }
 }

@@ -4,6 +4,7 @@ import it.unibo.jurassiko.controller.api.MainController;
 import it.unibo.jurassiko.core.api.GamePhase.Phase;
 import it.unibo.jurassiko.model.player.api.Player.GameColor;
 import it.unibo.jurassiko.view.gamescreen.impl.ViewImpl;
+import it.unibo.jurassiko.view.windows.CardWindow;
 import it.unibo.jurassiko.view.windows.ObjectiveWindow;
 
 import java.awt.BorderLayout;
@@ -47,9 +48,10 @@ public class TopBarPanel extends JPanel {
     private final transient MainController controller;
     private final JLabel topLabel;
     private JLabel currentPlayer;
-    private JLabel currentAmountDino;
     private final ObjectiveWindow objectiveCard;
+    private final CardWindow cardWindow;
     private final JButton objective;
+    private final JButton cards;
     private final JButton place;
     private final JButton attack;
     private final JButton endTurn;
@@ -60,14 +62,15 @@ public class TopBarPanel extends JPanel {
      * 
      * @param controller    the MainController
      * @param objectiveCard the ObjectiveCard
+     * @param cardWindow    the CardWindow
      */
-    @SuppressFBWarnings(
-        value = "EI_EXPOSE_REP2",
-        justification = "MainController and ObjectiveWindow instances are needed on this class by design"
-    )
-    public TopBarPanel(final MainController controller, final ObjectiveWindow objectiveCard) {
+    @SuppressFBWarnings(value = "EI_EXPOSE_REP2",
+     justification = "MainController and ObjectiveWindow instances are needed on this class by design")
+    public TopBarPanel(final MainController controller, final ObjectiveWindow objectiveCard,
+            final CardWindow cardWindow) {
         this.objectiveCard = objectiveCard;
         this.controller = controller;
+        this.cardWindow = cardWindow;
 
         BufferedImage imageBar;
         try {
@@ -82,6 +85,7 @@ public class TopBarPanel extends JPanel {
         this.topLabel = new JLabel(imageTopBar);
         this.topLabel.setLayout(new GridBagLayout());
         this.objective = new JButton(OBJ_BUTTON_NAME);
+        this.cards = new JButton("Carte");
         this.place = new JButton(PLACE_BUTTON_NAME);
         this.attack = new JButton(ATK_BUTTON_NAME);
         this.endTurn = new JButton(ENDTURN_BUTTON_NAME);
@@ -99,8 +103,10 @@ public class TopBarPanel extends JPanel {
     private void loadLabel() {
         this.objective.addActionListener(e -> this.objectiveCard.showObjectiveCard());
         this.place.addActionListener(e -> this.controller.startGameLoop());
+        this.cards.addActionListener(e -> this.cardWindow.showCards());
         this.attack.addActionListener(e -> this.controller.openTerritorySelector());
         this.endTurn.addActionListener(e -> {
+            controller.getCurrentPlayer().setAssigned(false);
             final String[] options = { "Si", "No" };
             final int result = JOptionPane.showOptionDialog(this,
                     ENDTURN_DIALOG_QUESTION,
@@ -117,25 +123,21 @@ public class TopBarPanel extends JPanel {
                 controller.endTurn();
             }
         });
-        this.currentAmountDino = new JLabel();
-        this.currentAmountDino.setBackground(new Color(BG_PLAYER_RGB, BG_PLAYER_RGB, BG_PLAYER_RGB));
-        this.currentAmountDino.setOpaque(true);
-        setCurrentAmountDino();
         this.currentPlayer = new JLabel();
         this.currentPlayer.setBackground(new Color(BG_PLAYER_RGB, BG_PLAYER_RGB, BG_PLAYER_RGB));
         this.currentPlayer.setOpaque(true);
         setCurrentPlayer();
         final Font font = new Font("Serif", Font.BOLD, FONT_SIZE);
+        this.cards.setFont(font);
         this.objective.setFont(font);
         this.place.setFont(font);
         this.attack.setFont(font);
         this.endTurn.setFont(font);
-        this.currentAmountDino.setFont(font);
         this.currentPlayer.setFont(font);
         // CHECKSTYLE: MagicNumber OFF
         // Simple incremental grid x value
         addComponent(currentPlayer, 0, 0);
-        addComponent(currentAmountDino, 1, 0);
+        addComponent(cards, 1, 0);
         addComponent(objective, 2, 0);
         addComponent(place, 3, 0);
         addComponent(attack, 4, 0);
@@ -165,11 +167,6 @@ public class TopBarPanel extends JPanel {
         this.currentPlayer.setText("Player: " + currentColor.getColorName());
     }
 
-    private void setCurrentAmountDino() {
-        final int currentAmount = this.controller.getRemainingDinoToPlace();
-        this.currentAmountDino.setText("Dino da piazzare: " + currentAmount);
-    }
-
     /**
      * Set the Button Enabled or Disabled based on the Phase of the game.
      */
@@ -178,7 +175,6 @@ public class TopBarPanel extends JPanel {
         disableAllJButtons();
         switch (phase) {
             case PLACEMENT -> {
-                this.currentAmountDino.setVisible(true);
                 this.place.setEnabled(true);
             }
             case ATTACK_FIRST_PART -> {
@@ -195,7 +191,6 @@ public class TopBarPanel extends JPanel {
      * Disable all the buttons but the Objective Button.
      */
     private void disableAllJButtons() {
-        this.currentAmountDino.setVisible(false);
         this.place.setEnabled(false);
         this.attack.setEnabled(false);
         this.endTurn.setEnabled(false);
@@ -206,7 +201,6 @@ public class TopBarPanel extends JPanel {
      */
     public void updateTopBar() {
         setCurrentPlayer();
-        setCurrentAmountDino();
         setActiveButton();
     }
 }

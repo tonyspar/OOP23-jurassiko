@@ -22,9 +22,11 @@ public class BattleImpl implements Battle {
             final int nDiceDefence) {
         final List<Integer> listRollAttack = dice.rollMultiple(nDiceAttack);
         final List<Integer> listRollDefence = dice.rollMultiple(nDiceDefence);
+        final int nDiceLower = Math.min(nDiceAttack, nDiceDefence);
+
         int nTroopsAttackDeath = 0;
         int nTroopsDefenceDeath = 0;
-        final int nDiceLower = Math.min(nDiceAttack, nDiceDefence);
+
         for (int i = 0; i < nDiceLower; i++) {
             if (listRollDefence.get(i) >= listRollAttack.get(i)) {
                 nTroopsAttackDeath++;

@@ -30,6 +30,7 @@ import it.unibo.jurassiko.model.battle.api.Battle;
 import it.unibo.jurassiko.model.battle.impl.BattleImpl;
 import it.unibo.jurassiko.model.borders.api.Border;
 import it.unibo.jurassiko.model.borders.impl.BorderImpl;
+import it.unibo.jurassiko.model.card.api.Card;
 import it.unibo.jurassiko.model.objective.api.Objective;
 import it.unibo.jurassiko.model.objective.impl.ObjectiveFactoryImpl;
 import it.unibo.jurassiko.model.player.api.Player;
@@ -39,6 +40,7 @@ import it.unibo.jurassiko.model.territory.api.Ocean;
 import it.unibo.jurassiko.model.territory.api.Territory;
 import it.unibo.jurassiko.model.territory.impl.OceanFactoryImpl;
 import it.unibo.jurassiko.model.territory.impl.TerritoryFactoryImpl;
+import it.unibo.jurassiko.reader.impl.DeckDataReader;
 import it.unibo.jurassiko.view.gamescreen.impl.ViewImpl;
 import it.unibo.jurassiko.view.panels.SpriteLoader;
 import it.unibo.jurassiko.view.windows.TerritorySelector;
@@ -51,6 +53,7 @@ public class MainControllerImpl implements MainController {
     private static final int SELECTOR_HGAP = 15;
     private static final int MAX_TERRITORIES = 7;
     private static final int START_AMOUNT_DINO = 1;
+    private static final String DECK_PATH = "config/deck.json";
 
     private final Set<Territory> allTerritories;
     private final Set<Ocean> oceans;
@@ -62,7 +65,7 @@ public class MainControllerImpl implements MainController {
     private final TerritorySelector terrSelect;
     private final ViewImpl mainFrame;
     private final Border border;
-
+    private final List<Card> deck;
     private final List<Player> players;
 
     private final Battle battle;
@@ -83,6 +86,7 @@ public class MainControllerImpl implements MainController {
         this.mainFrame = new ViewImpl(this);
         this.border = new BorderImpl();
         this.battle = new BattleImpl();
+        this.deck = new DeckDataReader().readFileData(DECK_PATH);
     }
 
     /**
@@ -175,6 +179,7 @@ public class MainControllerImpl implements MainController {
     @Override
     public void showWinnerName(final GameColor winner) {
         final var dinoSprites = new SpriteLoader().getDinoSprites();
+
         final ImageIcon winnerSprite = dinoSprites.get(winner);
         final String message = "Il giocatore " + colorToString(winner) + " ha vinto!";
 
@@ -272,10 +277,22 @@ public class MainControllerImpl implements MainController {
      * {@inheritDoc}
      */
     @Override
+    public Optional<Card> assignment() {
+            final Card card = this.deck.get(0);
+            this.deck.remove(card);
+            return Optional.of(card);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
     public void manageSelection(final String territory) {
         final var colorCurrentPlayer = game.getCurrentPlayerTurn().getColor();
         switch (this.game.getGamePhase()) {
-            case PLACEMENT -> changeGroundDinoAmount(territory, START_AMOUNT_DINO);
+            case PLACEMENT -> {
+                changeGroundDinoAmount(territory, START_AMOUNT_DINO);
+            }
             case ATTACK_FIRST_PART -> {
             }
             case ATTACK_SECOND_PART -> {
@@ -291,6 +308,11 @@ public class MainControllerImpl implements MainController {
                 changeGroundDinoAmount(defender.getName(), -deaths.y());
                 if (getMapTerritoryValue(defender.getName()).y() <= 0) {
                     conquestSuccesful = true;
+                    final var card = assignment();
+                    if (!game.getCurrentPlayerTurn().isAssigned() && !card.isEmpty()) {
+                        game.getCurrentPlayerTurn().setAssigned(true);
+                        game.getCurrentPlayerTurn().addCard(card.get());
+                    }
                     final int dinoToMove = battle.calculateDino(getMapTerritoryValue(attacker).y(), true);
                     final Pair<GameColor, Integer> defReplacement = new Pair<>(colorCurrentPlayer, dinoToMove);
                     final var loserColor = getMapTerritoryValue(territory).x();
@@ -345,6 +367,7 @@ public class MainControllerImpl implements MainController {
     public int getRemainingDinoToPlace() {
         return this.game.getRemainingDinoToPlace();
     }
+
 
     /**
      * Adds the specified amount of dino to the territory in the map.
@@ -557,5 +580,25 @@ public class MainControllerImpl implements MainController {
             case GREEN -> "VERDE";
             default -> throw new IllegalArgumentException("Invalid color");
         };
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public void addCard(final Card card) {
+        this.deck.add(card);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Optional<Card> getCard(final int index) {
+        if (index >= 0 && index < this.deck.size()) {
+            return Optional.of(this.deck.get(index));
+        } else {
+            return Optional.empty();
+        }
     }
 }
